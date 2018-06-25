@@ -53,6 +53,8 @@ struct switchtec_dev;
 #define SWITCHTEC_UNBOUND_PORT 255
 #define SWITCHTEC_PFF_PORT_VEP 100
 
+#define SWITCHTEC_MAX_PORTS_PER_STK 8
+
 #ifdef __CHECKER__
 #define __gas __attribute__((noderef, address_space(1)))
 #else
