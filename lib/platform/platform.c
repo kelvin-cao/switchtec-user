@@ -131,6 +131,9 @@ int switchtec_cmd(struct switchtec_dev *dev,  uint32_t cmd,
 		  const void *payload, size_t payload_len, void *resp,
 		  size_t resp_len)
 {
+	cmd &= SWITCHTEC_CMD_MASK;
+	cmd |= dev->pax_id << SWITCHTEC_PAX_ID_SHIFT;
+
 	return dev->ops->cmd(dev, cmd, payload, payload_len, resp, resp_len);
 }
 
