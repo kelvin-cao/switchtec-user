@@ -61,6 +61,16 @@ int switchtec_handler(const char *optarg, void *value_addr,
 		return 1;
 	}
 
+	if (switchtec_is_gen3(dev) && switchtec_is_pax(dev)) {
+		fprintf(stderr, "%s: Gen3 PAX is not supported.\n", optarg);
+		return 2;
+	}
+
+	if (switchtec_is_gen4(dev)) {
+		fprintf(stderr, "%s: Gen4 is not supported.\n", optarg);
+		return 3;
+	}
+
 	*((struct switchtec_dev  **) value_addr) = dev;
 	return 0;
 }
@@ -100,6 +110,46 @@ static int list(int argc, char **argv)
 
 	free(devices);
 	return 0;
+}
+
+int print_dev_info(struct switchtec_dev *dev)
+{
+	int ret;
+	int device_id;
+	char version[64];
+
+	device_id = switchtec_device_id(dev);
+
+	ret = switchtec_get_fw_version(dev, version, sizeof(version));
+	if (ret < 0) {
+		switchtec_perror("dev info");
+		return ret;
+	}
+
+	printf("%s:\n", switchtec_name(dev));
+	printf("    Generation:  %s\n", switchtec_gen_str(dev));
+	printf("    Variant:     %s\n", switchtec_variant_str(dev));
+	printf("    Device ID:   0x%04x\n", device_id);
+	printf("    FW Version:  %s\n", version);
+
+	return 0;
+}
+
+static int info(int argc, char **argv)
+{
+	const char *desc = "Display information for a Switchtec device";
+
+	static struct {
+		struct switchtec_dev *dev;
+	} cfg = {};
+
+	const struct argconfig_options opts[] = {
+		DEVICE_OPTION,
+		{NULL}};
+
+	argconfig_parse(argc, argv, desc, opts, &cfg, sizeof(cfg));
+
+	return print_dev_info(cfg.dev);
 }
 
 static void print_port_title(struct switchtec_dev *dev,
@@ -1991,6 +2041,7 @@ static int evcntr_wait(int argc, char **argv)
 
 static const struct cmd commands[] = {
 	CMD(list, "List all switchtec devices on this machine"),
+	CMD(info, "Display information for a Switchtec device"),
 	CMD(gui, "Display a simple ncurses GUI for the switch"),
 	CMD(status, "Display status information"),
 	CMD(bw, "Measure the bandwidth for each port"),
