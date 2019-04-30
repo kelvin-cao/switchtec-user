@@ -1091,12 +1091,19 @@ static void print_bind_info(struct switchtec_bind_status_out status)
 				       status.port_info[i].phys_port_id,
 				       status.port_info[i].log_port_id,
 				       status.port_info[i].par_id);
+			else
+				printf("physical port %u\n",
+				       status.port_info[i].phys_port_id);
 			break;
 		case BIND_INFO_FAIL:
 			printf("bind_info: Fail\n");
+			printf("physical port %u\n",
+			       status.port_info[i].phys_port_id);
 			break;
 		case BIND_INFO_IN_PROGRESS:
 			printf("bind_info: In Progress\n");
+			printf("physical port %u\n",
+			       status.port_info[i].phys_port_id);
 			break;
 		}
 	}
@@ -1123,8 +1130,6 @@ static int port_bind_info(int argc, char **argv)
 
 	if (cfg.phy_port == 0xff)
 		printf("physical port: all\n");
-	else
-		printf("physical port: %d\n", cfg.phy_port);
 
 	ret = switchtec_bind_info(cfg.dev, &bind_status, cfg.phy_port);
 
