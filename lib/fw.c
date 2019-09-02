@@ -151,6 +151,27 @@ int switchtec_fw_toggle_active_partition(struct switchtec_dev *dev,
 			     NULL, 0);
 }
 
+int switchtec_set_fw_backup(struct switchtec_dev *dev,
+			    enum switchtec_fw_partition_type type)
+{
+	int ret;
+
+	struct set_fw_backup{
+		uint8_t sub_cmd;
+		uint8_t part_type;
+		uint8_t flag;
+		uint8_t rsvd;
+	} cmd = {
+		.sub_cmd = MRPC_FWDNLD_SET_REDUNDANCY,
+		.part_type = GEN4_FW_PART_TYPE(type),
+		.flag = 1,
+	};
+
+	ret = switchtec_cmd(dev, MRPC_FWLOGRD, &cmd, sizeof(cmd), NULL, 0);
+
+	return ret;
+}
+
 struct cmd_fwdl {
 	struct cmd_fwdl_hdr {
 		uint8_t subcmd;

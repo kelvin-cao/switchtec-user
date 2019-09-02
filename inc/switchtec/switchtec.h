@@ -779,6 +779,8 @@ int switchtec_fw_wait(struct switchtec_dev *dev,
 int switchtec_fw_toggle_active_partition(struct switchtec_dev *dev,
 					 int toggle_bl2, int toggle_keyman,
 					 int toggle_fw, int toggle_cfg);
+int switchtec_set_fw_backup(struct switchtec_dev *dev,
+			    enum switchtec_fw_partition_type type);
 int switchtec_fw_write_fd(struct switchtec_dev *dev, int img_fd,
 			  int dont_activate, int force,
 			  void (*progress_callback)(int cur, int tot));

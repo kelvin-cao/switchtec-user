@@ -1583,6 +1583,45 @@ static int fw_toggle(int argc, char **argv)
 	return ret;
 }
 
+static int fw_set_backup(int argc, char **argv)
+{
+	const char *desc = "Set redundancy flag for a partition type";
+	int ret = 0;
+
+	const struct argconfig_choice types[] = {
+		{"KEYMAN", SWITCHTEC_FW_PART_TYPE_KEYMAN,
+		 "Set the redundancy flag for the key manifest partitions"},
+		{"BL2", SWITCHTEC_FW_PART_TYPE_BL2,
+		 "Set the redundancy flag for the bl2 partitions"},
+		{"CFG", SWITCHTEC_FW_PART_TYPE_CFG,
+		 "Set the redundancy flag for the config partitions"},
+		{"MAINFW", SWITCHTEC_FW_PART_TYPE_IMG,
+		 "Set the redundancy flag for the main firmware partitions"},
+		{}
+	};
+
+	static struct {
+		struct switchtec_dev *dev;
+		int type;
+	} cfg = {
+	};
+
+	const struct argconfig_options opts[] = {
+		DEVICE_OPTION,
+		{"type", 't', "FW PARTITION TYPE", CFG_CHOICES, &cfg.type,
+		  required_argument,
+		 "firmware partition type to set", .choices=types},
+		{NULL}};
+
+	argconfig_parse(argc, argv, desc, opts, &cfg, sizeof(cfg));
+
+	ret = switchtec_set_fw_backup(cfg.dev, cfg.type);
+	if (ret)
+		switchtec_perror("set fw backup");
+
+	return ret;
+}
+
 static int fw_read(int argc, char **argv)
 {
 	const char *desc = "Read the firmware image";
@@ -2142,6 +2181,7 @@ static const struct cmd commands[] = {
 	CMD(fw_update, "Upload a new firmware image"),
 	CMD(fw_info, "Return information on currently flashed firmware"),
 	CMD(fw_toggle, "Toggle the active and inactive firmware partition"),
+	CMD(fw_set_backup, "Set redundancy flag for a partition type"),
 	CMD(fw_read, "Read back firmware image from hardware"),
 	CMD(fw_img_info, "Display information for a firmware image"),
 	CMD(evcntr, "Display event counters"),
