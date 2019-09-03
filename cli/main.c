@@ -733,6 +733,11 @@ static int events(int argc, char **argv)
 	populate_event_choices(event_choices, 1);
 	argconfig_parse(argc, argv, desc, opts, &cfg, sizeof(cfg));
 
+	if (switchtec_is_pax(cfg.dev)) {
+		fprintf(stderr, "PAX is not supported by this command.\n");
+		return 1;
+	}
+
 	ret = switchtec_event_summary(cfg.dev, &sum);
 	if (ret < 0) {
 		perror("event_summary");
@@ -790,6 +795,11 @@ static int event_wait(int argc, char **argv)
 
 	populate_event_choices(event_choices, 0);
 	argconfig_parse(argc, argv, desc, opts, &cfg, sizeof(cfg));
+
+	if (switchtec_is_pax(cfg.dev)) {
+		fprintf(stderr, "PAX is not supported by this command.\n");
+		return 1;
+	}
 
 	switch (switchtec_event_info(cfg.event_id, NULL, NULL)) {
 	case SWITCHTEC_EVT_GLOBAL:
