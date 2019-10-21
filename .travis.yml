@@ -48,6 +48,8 @@ before_install:
     - eval "${MATRIX_EVAL}"
     - sudo apt-get update
     - sudo apt-get install -y libssl-dev
+    - sudo ls /usr/include/openssl/
+    - sudo find /usr -name pem.h
 
 
 notifications:
