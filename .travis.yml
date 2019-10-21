@@ -1,6 +1,6 @@
 language: c
 script: ./configure ${CONFIG_OPTS} && make -k W=1 ${MAKE_FLAGS}
-dist: trusty
+dist: xeniel
 compiler: gcc
 sudo: required
 
